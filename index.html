@@ -3,597 +3,418 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Music Player</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Innova Schools · Olimpiadas</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0a0a0f;
-    --surface: #12121a;
-    --card: #1a1a26;
-    --border: #2a2a3a;
-    --accent: #ff4d6d;
-    --accent2: #ffd166;
-    --accent3: #06d6a0;
-    --text: #f0f0f8;
-    --muted: #6b6b88;
-    --bar-h: 4px;
-  }
+:root {
+  --blue:   #0957a0;
+  --blue2:  #003d8f;
+  --orange: #f27c28;
+  --green:  #7ab840;
+  --gold:   #ffd700;
+  --gold2:  #e6a800;
+  --white:  #ffffff;
+  --muted:  #7a8fae;
+  --dark:   #0a1628;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Montserrat', sans-serif;
+  background: var(--dark);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 10%, rgba(9,87,160,0.35) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 35% at 80% 90%, rgba(242,124,40,0.2) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 30% at 70% 15%, rgba(122,184,64,0.15) 0%, transparent 60%);
+  pointer-events: none; z-index: 0;
+}
+.rings-bg {
+  position: fixed; bottom: -60px; right: -80px;
+  opacity: 0.04; pointer-events: none; z-index: 0;
+}
+.app {
+  position: relative; z-index: 1;
+  width: min(720px, 97vw);
+  border-radius: 28px; overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 40px 100px rgba(0,0,0,0.7), 0 0 60px rgba(9,87,160,0.15);
+}
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* HEADER */
+.header {
+  background: linear-gradient(135deg, var(--blue2) 0%, var(--blue) 60%, #1070c0 100%);
+  padding: 18px 28px 16px;
+  display: flex; align-items: center; gap: 16px;
+  position: relative; overflow: hidden;
+}
+.header::before {
+  content: ''; position: absolute; inset: 0;
+  background: repeating-linear-gradient(-45deg, transparent, transparent 12px, rgba(255,255,255,0.025) 12px, rgba(255,255,255,0.025) 24px);
+}
+.header::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--blue) 0%, var(--gold) 33%, var(--green) 66%, var(--orange) 100%);
+}
+.logo-img-wrap {
+  flex-shrink: 0; position: relative; z-index: 1;
+  background: white;
+  border-radius: 12px;
+  padding: 6px 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  height: 52px;
+  display: flex; align-items: center;
+}
+.logo-img-wrap img {
+  height: 38px;
+  width: auto;
+  display: block;
+}
+.header-text { position: relative; z-index: 1; flex: 1; }
+.school-name {
+  font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 700;
+  color: var(--white); letter-spacing: 1px; line-height: 1; margin-bottom: 3px;
+}
+.event-name { font-size: 10px; color: rgba(255,255,255,0.75); letter-spacing: 3px; text-transform: uppercase; font-weight: 600; }
+.olympic-rings { position: relative; z-index: 1; display: flex; align-items: center; }
+.ring {
+  width: 20px; height: 20px; border-radius: 50%; border: 2.5px solid;
+  position: relative; flex-shrink: 0;
+}
+.ring:nth-child(1) { border-color: #4fc3f7; margin-right: -6px; z-index: 5; }
+.ring:nth-child(2) { border-color: var(--gold); margin-right: -6px; z-index: 4; }
+.ring:nth-child(3) { border-color: #ef9a9a; margin-right: -6px; z-index: 5; }
+.ring:nth-child(4) { border-color: #a5d6a7; margin-right: -6px; z-index: 4; }
+.ring:nth-child(5) { border-color: rgba(255,255,255,0.4); z-index: 5; }
 
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    position: relative;
-  }
+/* BODY */
+.body {
+  background: linear-gradient(180deg, #0e1e3a 0%, #0a1628 100%);
+  display: grid; grid-template-columns: 1fr 1fr;
+}
 
-  /* Ambient blobs */
-  body::before, body::after {
-    content: '';
-    position: fixed;
-    border-radius: 50%;
-    filter: blur(100px);
-    opacity: 0.12;
-    pointer-events: none;
-    z-index: 0;
-  }
-  body::before {
-    width: 500px; height: 500px;
-    background: var(--accent);
-    top: -150px; left: -150px;
-    animation: blob1 8s ease-in-out infinite alternate;
-  }
-  body::after {
-    width: 400px; height: 400px;
-    background: var(--accent3);
-    bottom: -100px; right: -100px;
-    animation: blob2 10s ease-in-out infinite alternate;
-  }
-  @keyframes blob1 { to { transform: translate(80px, 60px) scale(1.1); } }
-  @keyframes blob2 { to { transform: translate(-60px, -40px) scale(1.15); } }
+/* PLAYER SIDE */
+.player-side {
+  padding: 28px 24px 24px;
+  border-right: 1px solid rgba(255,255,255,0.07);
+  display: flex; flex-direction: column; gap: 20px;
+}
+.now-label {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--gold); font-weight: 700;
+}
+.pulse-dot {
+  width: 7px; height: 7px; background: var(--gold); border-radius: 50%;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(255,215,0,0.4); }
+  50%      { opacity: 0.7; transform: scale(0.8); box-shadow: 0 0 0 6px rgba(255,215,0,0); }
+}
+.medal-wrap { display: flex; justify-content: center; }
+.medal-outer {
+  width: 160px; height: 160px;
+  background: conic-gradient(
+    var(--gold2) 0deg, var(--gold) 30deg, #fff7cc 60deg, var(--gold) 90deg,
+    var(--gold2) 120deg, var(--gold) 150deg, #fff7cc 180deg, var(--gold) 210deg,
+    var(--gold2) 240deg, var(--gold) 270deg, #fff7cc 300deg, var(--gold) 330deg, var(--gold2) 360deg
+  );
+  padding: 6px; border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(255,215,0,0.3), 0 0 40px rgba(255,215,0,0.15), 0 16px 40px rgba(0,0,0,0.5);
+  animation: spinMedal 10s linear infinite;
+  animation-play-state: paused;
+}
+.medal-outer.playing { animation-play-state: running; }
+@keyframes spinMedal { to { transform: rotate(360deg); } }
+.medal-inner {
+  width: 100%; height: 100%; border-radius: 50%;
+  background: linear-gradient(135deg, #0e1e3a 0%, #0a1628 100%);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.medal-inner::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 30% 25%, rgba(9,87,160,0.4) 0%, transparent 60%);
+}
+.medal-emoji {
+  font-size: 52px; position: relative; z-index: 1;
+}
+.medal-outer.playing .medal-emoji {
+  animation: counterSpin 10s linear infinite;
+}
+@keyframes counterSpin { to { transform: rotate(-360deg); } }
+.track-info { text-align: center; }
+.track-title {
+  font-family: 'Oswald', sans-serif; font-size: 30px; font-weight: 700;
+  color: var(--white); letter-spacing: 1px; line-height: 1; text-transform: uppercase; margin-bottom: 4px;
+  background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.75) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.track-sub { font-size: 10px; color: var(--muted); letter-spacing: 1px; font-weight: 600; }
+.time-row {
+  display: flex; justify-content: space-between;
+  font-size: 10px; color: var(--muted); font-weight: 600; margin-bottom: 6px; letter-spacing: 0.5px;
+}
+.prog-track {
+  height: 5px; background: rgba(255,255,255,0.08); border-radius: 99px;
+  cursor: pointer; position: relative; overflow: visible;
+}
+.prog-fill {
+  height: 100%; width: 0%; border-radius: 99px;
+  background: linear-gradient(90deg, var(--blue) 0%, var(--gold) 100%);
+  transition: width 0.1s linear; position: relative;
+}
+.prog-fill::after {
+  content: ''; position: absolute; right: -5px; top: 50%; transform: translateY(-50%);
+  width: 11px; height: 11px; border-radius: 50%; background: var(--gold);
+  box-shadow: 0 0 8px rgba(255,215,0,0.6); opacity: 0; transition: opacity 0.2s;
+}
+.prog-track:hover .prog-fill::after { opacity: 1; }
+.vol-row { display: flex; align-items: center; gap: 10px; }
+.vol-icon { font-size: 13px; color: var(--muted); flex-shrink: 0; }
+.vol-track { flex: 1; height: 3px; background: rgba(255,255,255,0.08); border-radius: 99px; cursor: pointer; }
+.vol-fill { height: 100%; background: var(--green); border-radius: 99px; width: 80%; }
+.controls { display: flex; align-items: center; justify-content: center; gap: 10px; }
+.ctrl-btn {
+  background: none; border: none; cursor: pointer; color: var(--muted); font-size: 18px;
+  padding: 9px; border-radius: 50%; transition: color 0.15s, background 0.15s, transform 0.15s;
+  display: flex; align-items: center; justify-content: center;
+}
+.ctrl-btn:hover { color: var(--white); background: rgba(255,255,255,0.07); transform: scale(1.1); }
+.btn-play-main {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--orange) 0%, #d05f0a 100%);
+  border: none; cursor: pointer; color: var(--white); font-size: 22px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 8px 24px rgba(242,124,40,0.45); transition: transform 0.15s, box-shadow 0.2s;
+}
+.btn-play-main:hover { transform: scale(1.08); box-shadow: 0 12px 32px rgba(242,124,40,0.65); }
+.btn-play-main:active { transform: scale(0.95); }
 
-  .wrapper {
-    position: relative;
-    z-index: 1;
-    display: grid;
-    grid-template-columns: 340px 320px;
-    gap: 0;
-    max-height: 95vh;
-    border-radius: 24px;
-    overflow: hidden;
-    box-shadow: 0 40px 120px rgba(0,0,0,0.7), 0 0 0 1px var(--border);
-    background: var(--surface);
-  }
+/* PLAYLIST */
+.playlist-side { display: flex; flex-direction: column; }
+.pl-header {
+  padding: 20px 20px 14px; border-bottom: 1px solid rgba(255,255,255,0.07);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.pl-title {
+  font-family: 'Oswald', sans-serif; font-size: 16px; font-weight: 700;
+  color: var(--white); letter-spacing: 2px; text-transform: uppercase;
+}
+.pl-badge {
+  font-size: 10px; font-weight: 700; color: var(--blue);
+  background: rgba(9,87,160,0.15); border: 1px solid rgba(9,87,160,0.4);
+  border-radius: 99px; padding: 3px 10px; letter-spacing: 1px;
+}
+.playlist {
+  flex: 1; overflow-y: auto; padding: 6px 0; max-height: 400px;
+  scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent;
+}
+.playlist::-webkit-scrollbar { width: 3px; }
+.playlist::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 99px; }
+.track-row {
+  display: flex; align-items: center; padding: 10px 16px; cursor: pointer;
+  gap: 12px; transition: background 0.12s; border-left: 3px solid transparent;
+}
+.track-row:hover { background: rgba(255,255,255,0.04); }
+.track-row.active { background: rgba(9,87,160,0.14); border-left-color: var(--gold); }
+.tr-num { font-size: 11px; color: var(--muted); width: 16px; text-align: center; font-weight: 700; flex-shrink: 0; }
+.track-row.active .tr-num { color: var(--gold); }
+.eq-bars { display: flex; align-items: flex-end; gap: 1.5px; width: 16px; height: 12px; flex-shrink: 0; }
+.eq-b { width: 3px; background: var(--gold); border-radius: 1px; }
+.eq-b:nth-child(1) { animation: eq1 0.5s ease-in-out infinite alternate; }
+.eq-b:nth-child(2) { animation: eq2 0.45s ease-in-out infinite alternate; }
+.eq-b:nth-child(3) { animation: eq3 0.6s ease-in-out infinite alternate; }
+@keyframes eq1 { from { height: 3px; } to { height: 11px; } }
+@keyframes eq2 { from { height: 7px; } to { height: 3px; } }
+@keyframes eq3 { from { height: 5px; } to { height: 12px; } }
+.tr-emoji { font-size: 20px; flex-shrink: 0; width: 26px; text-align: center; }
+.tr-info { flex: 1; min-width: 0; }
+.tr-name {
+  font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.85);
+  text-transform: uppercase; letter-spacing: 0.5px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.track-row.active .tr-name { color: var(--white); }
 
-  /* ── LEFT: NOW PLAYING ── */
-  .now-playing {
-    background: var(--card);
-    padding: 36px 32px 28px;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    overflow: hidden;
-  }
+/* FOOTER */
+.footer {
+  background: rgba(0,0,0,0.3); border-top: 1px solid rgba(255,255,255,0.06);
+  padding: 10px 28px; display: flex; align-items: center; justify-content: space-between;
+}
+.footer-logo { font-family: 'Oswald', sans-serif; font-size: 12px; color: rgba(255,255,255,0.3); letter-spacing: 2px; }
+.footer-logo span { color: var(--orange); }
+.footer-rings { display: flex; align-items: center; }
+.fr { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid; position: relative; }
+.fr:nth-child(1) { border-color: #4fc3f7; margin-right: -3px; z-index: 5; }
+.fr:nth-child(2) { border-color: var(--gold); margin-right: -3px; z-index: 4; }
+.fr:nth-child(3) { border-color: #ef9a9a; margin-right: -3px; z-index: 5; }
+.fr:nth-child(4) { border-color: #a5d6a7; margin-right: -3px; z-index: 4; }
+.fr:nth-child(5) { border-color: rgba(255,255,255,0.25); z-index: 5; }
 
-  .now-playing::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at top left, rgba(255,77,109,0.08) 0%, transparent 70%);
-    pointer-events: none;
-  }
-
-  .label {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 10px;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    color: var(--accent);
-    font-weight: 500;
-    margin-bottom: 28px;
-  }
-
-  /* Vinyl disc */
-  .disc-wrap {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 28px;
-    position: relative;
-  }
-  .disc {
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    background: conic-gradient(
-      #1c1c2e 0deg, #252535 30deg, #1c1c2e 60deg,
-      #252535 90deg, #1c1c2e 120deg, #252535 150deg,
-      #1c1c2e 180deg, #252535 210deg, #1c1c2e 240deg,
-      #252535 270deg, #1c1c2e 300deg, #252535 330deg, #1c1c2e 360deg
-    );
-    box-shadow: 0 0 0 2px #2a2a3a, 0 20px 50px rgba(0,0,0,0.5);
-    position: relative;
-    transition: animation 0.3s;
-    animation: spin 8s linear infinite;
-    animation-play-state: paused;
-  }
-  .disc.playing { animation-play-state: running; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* Grooves */
-  .disc::before {
-    content: '';
-    position: absolute;
-    inset: 18px;
-    border-radius: 50%;
-    background: conic-gradient(
-      #141420 0deg, #1e1e2e 20deg, #141420 40deg,
-      #1e1e2e 60deg, #141420 80deg, #1e1e2e 100deg,
-      #141420 120deg, #1e1e2e 140deg, #141420 160deg,
-      #1e1e2e 180deg, #141420 200deg, #1e1e2e 220deg,
-      #141420 240deg, #1e1e2e 260deg, #141420 280deg,
-      #1e1e2e 300deg, #141420 320deg, #1e1e2e 340deg, #141420 360deg
-    );
-    box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
-  }
-  /* Center hole */
-  .disc::after {
-    content: '';
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 36px; height: 36px;
-    border-radius: 50%;
-    background: radial-gradient(circle, var(--accent) 0%, #c0392b 100%);
-    box-shadow: 0 0 12px rgba(255,77,109,0.5);
-    z-index: 2;
-  }
-
-  /* Track info */
-  .track-name {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 38px;
-    letter-spacing: 1px;
-    line-height: 1;
-    margin-bottom: 6px;
-    text-transform: uppercase;
-    background: linear-gradient(135deg, #fff 0%, var(--muted) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .track-meta {
-    font-size: 12px;
-    color: var(--muted);
-    margin-bottom: 24px;
-    font-weight: 300;
-  }
-
-  /* Progress */
-  .progress-area { margin-bottom: 18px; }
-  .progress-bar {
-    width: 100%;
-    height: var(--bar-h);
-    background: var(--border);
-    border-radius: 99px;
-    cursor: pointer;
-    position: relative;
-    margin-bottom: 8px;
-    overflow: visible;
-  }
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--accent), var(--accent2));
-    border-radius: 99px;
-    width: 0%;
-    transition: width 0.1s linear;
-    position: relative;
-  }
-  .progress-fill::after {
-    content: '';
-    position: absolute;
-    right: -5px; top: 50%;
-    transform: translateY(-50%);
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    background: var(--accent2);
-    opacity: 0;
-    transition: opacity 0.2s;
-    box-shadow: 0 0 6px rgba(255,209,102,0.6);
-  }
-  .progress-bar:hover .progress-fill::after { opacity: 1; }
-
-  .time-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 11px;
-    color: var(--muted);
-    font-weight: 300;
-  }
-
-  /* Volume */
-  .volume-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 24px;
-  }
-  .vol-icon { font-size: 14px; color: var(--muted); flex-shrink: 0; }
-  .volume-bar {
-    flex: 1;
-    height: 3px;
-    background: var(--border);
-    border-radius: 99px;
-    cursor: pointer;
-    position: relative;
-  }
-  .volume-fill {
-    height: 100%;
-    background: var(--accent3);
-    border-radius: 99px;
-    width: 80%;
-  }
-
-  /* Controls */
-  .controls {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-  }
-  .btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--muted);
-    font-size: 20px;
-    transition: color 0.2s, transform 0.15s;
-    padding: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-  }
-  .btn:hover { color: var(--text); transform: scale(1.15); }
-
-  .btn-play {
-    width: 54px; height: 54px;
-    background: linear-gradient(135deg, var(--accent), #c0152f);
-    color: white;
-    font-size: 20px;
-    border-radius: 50%;
-    box-shadow: 0 8px 24px rgba(255,77,109,0.4);
-    border: none;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: transform 0.15s, box-shadow 0.2s;
-  }
-  .btn-play:hover {
-    transform: scale(1.08);
-    box-shadow: 0 12px 32px rgba(255,77,109,0.55);
-  }
-  .btn-play:active { transform: scale(0.96); }
-
-  /* ── RIGHT: PLAYLIST ── */
-  .playlist-panel {
-    background: var(--surface);
-    display: flex;
-    flex-direction: column;
-    border-left: 1px solid var(--border);
-  }
-  .playlist-header {
-    padding: 28px 24px 16px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .playlist-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px;
-    letter-spacing: 2px;
-    color: var(--text);
-  }
-  .track-count {
-    font-size: 11px;
-    color: var(--muted);
-    background: var(--card);
-    padding: 3px 10px;
-    border-radius: 99px;
-    border: 1px solid var(--border);
-  }
-
-  .playlist {
-    flex: 1;
-    overflow-y: auto;
-    padding: 8px 0;
-    scrollbar-width: thin;
-    scrollbar-color: var(--border) transparent;
-  }
-  .playlist::-webkit-scrollbar { width: 4px; }
-  .playlist::-webkit-scrollbar-track { background: transparent; }
-  .playlist::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
-
-  .track-item {
-    display: flex;
-    align-items: center;
-    padding: 11px 24px;
-    cursor: pointer;
-    gap: 14px;
-    transition: background 0.15s;
-    position: relative;
-    border-left: 2px solid transparent;
-  }
-  .track-item:hover { background: rgba(255,255,255,0.03); }
-  .track-item.active {
-    background: rgba(255,77,109,0.07);
-    border-left-color: var(--accent);
-  }
-
-  .track-num {
-    font-size: 11px;
-    color: var(--muted);
-    width: 18px;
-    text-align: center;
-    flex-shrink: 0;
-    font-weight: 300;
-  }
-  .track-item.active .track-num { color: var(--accent); }
-
-  /* Mini bars animation */
-  .bars {
-    display: flex;
-    align-items: flex-end;
-    gap: 2px;
-    width: 18px;
-    height: 14px;
-    flex-shrink: 0;
-  }
-  .bar-seg {
-    width: 3px;
-    background: var(--accent);
-    border-radius: 1px;
-  }
-  .bar-seg:nth-child(1) { animation: bar1 0.6s ease-in-out infinite alternate; }
-  .bar-seg:nth-child(2) { animation: bar2 0.5s ease-in-out infinite alternate; }
-  .bar-seg:nth-child(3) { animation: bar3 0.7s ease-in-out infinite alternate; }
-  @keyframes bar1 { from { height: 4px; } to { height: 12px; } }
-  @keyframes bar2 { from { height: 8px; } to { height: 4px; } }
-  @keyframes bar3 { from { height: 6px; } to { height: 14px; } }
-
-  .track-info { flex: 1; min-width: 0; }
-  .t-name {
-    font-size: 14px;
-    font-weight: 500;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    color: var(--text);
-    text-transform: capitalize;
-  }
-  .track-item.active .t-name { color: var(--accent); }
-  .t-dur {
-    font-size: 11px;
-    color: var(--muted);
-    font-weight: 300;
-    margin-top: 1px;
-  }
-
-  .t-duration {
-    font-size: 11px;
-    color: var(--muted);
-    font-weight: 300;
-    flex-shrink: 0;
-  }
-
-  /* Emoji accent per track */
-  .track-emoji {
-    font-size: 18px;
-    flex-shrink: 0;
-    width: 28px;
-    text-align: center;
-  }
-
-  @media (max-width: 700px) {
-    .wrapper {
-      grid-template-columns: 1fr;
-      grid-template-rows: auto auto;
-      max-height: 100vh;
-      border-radius: 0;
-    }
-    .playlist-panel { max-height: 50vh; }
-  }
+@media (max-width: 640px) {
+  .body { grid-template-columns: 1fr; }
+  .player-side { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.07); }
+  .playlist { max-height: 260px; }
+}
 </style>
 </head>
 <body>
 
-<div class="wrapper">
-  <!-- NOW PLAYING -->
-  <div class="now-playing">
-    <div class="label">▶ Now Playing</div>
+<svg class="rings-bg" width="500" height="300" viewBox="0 0 500 300" fill="none">
+  <circle cx="60"  cy="80"  r="55" stroke="white" stroke-width="8"/>
+  <circle cx="170" cy="80"  r="55" stroke="white" stroke-width="8"/>
+  <circle cx="280" cy="80"  r="55" stroke="white" stroke-width="8"/>
+  <circle cx="390" cy="80"  r="55" stroke="white" stroke-width="8"/>
+  <circle cx="115" cy="135" r="55" stroke="white" stroke-width="8"/>
+  <circle cx="225" cy="135" r="55" stroke="white" stroke-width="8"/>
+  <circle cx="335" cy="135" r="55" stroke="white" stroke-width="8"/>
+</svg>
 
-    <div class="disc-wrap">
-      <div class="disc" id="disc"></div>
+<div class="app">
+  <div class="header">
+    <div class="logo-img-wrap">
+      <img src="innova-schools-logo-setup-for-hubspot-landscape.webp" style="height: 38px; width: auto;">
     </div>
-
-    <div class="track-name" id="trackName">Águilas</div>
-    <div class="track-meta" id="trackMeta">Pista 1 de 9</div>
-
-    <div class="progress-area">
-      <div class="progress-bar" id="progressBar">
-        <div class="progress-fill" id="progressFill"></div>
-      </div>
-      <div class="time-row">
-        <span id="timeElapsed">0:00</span>
-        <span id="timeDuration">0:00</span>
-      </div>
+    <div class="header-text">
+      <div class="school-name">OLIMPIADAS</div>
+      <div class="event-name">Innova Schools · Música Oficial</div>
     </div>
-
-    <div class="volume-row">
-      <span class="vol-icon" id="volIcon">🔊</span>
-      <div class="volume-bar" id="volBar">
-        <div class="volume-fill" id="volFill"></div>
-      </div>
-    </div>
-
-    <div class="controls">
-      <button class="btn" id="btnPrev" title="Anterior">⏮</button>
-      <button class="btn-play" id="btnPlay">▶</button>
-      <button class="btn" id="btnNext" title="Siguiente">⏭</button>
+    <div class="olympic-rings">
+      <div class="ring"></div><div class="ring"></div><div class="ring"></div>
+      <div class="ring"></div><div class="ring"></div>
     </div>
   </div>
 
-  <!-- PLAYLIST -->
-  <div class="playlist-panel">
-    <div class="playlist-header">
-      <div class="playlist-title">Playlist</div>
-      <div class="track-count" id="trackCount">9 tracks</div>
+  <div class="body">
+    <div class="player-side">
+      <div class="now-label"><div class="pulse-dot" id="pulseDot"></div>En reproducción</div>
+      <div class="medal-wrap">
+        <div class="medal-outer" id="medalOuter">
+          <div class="medal-inner">
+            <span class="medal-emoji" id="medalEmoji">🦅</span>
+          </div>
+        </div>
+      </div>
+      <div class="track-info">
+        <div class="track-title" id="trackTitle">Águilas</div>
+        <div class="track-sub" id="trackSub">EQUIPO 1 DE 9 · INNOVA OLIMPIADAS</div>
+      </div>
+      <div>
+        <div class="time-row"><span id="elapsed">0:00</span><span id="dur">0:00</span></div>
+        <div class="prog-track" id="progTrack"><div class="prog-fill" id="progFill"></div></div>
+      </div>
+      <div class="vol-row">
+        <span class="vol-icon" id="volIcon">🔊</span>
+        <div class="vol-track" id="volTrack"><div class="vol-fill" id="volFill"></div></div>
+      </div>
+      <div class="controls">
+        <button class="ctrl-btn" id="btnPrev">⏮</button>
+        <button class="btn-play-main" id="btnPlay">▶</button>
+        <button class="ctrl-btn" id="btnNext">⏭</button>
+      </div>
     </div>
-    <div class="playlist" id="playlist"></div>
+
+    <div class="playlist-side">
+      <div class="pl-header">
+        <div class="pl-title">Equipos</div>
+        <div class="pl-badge">9 TRACKS</div>
+      </div>
+      <div class="playlist" id="playlist"></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-logo">INNOVA <span>SCHOOLS</span> · 2025</div>
+    <div class="footer-rings">
+      <div class="fr"></div><div class="fr"></div><div class="fr"></div>
+      <div class="fr"></div><div class="fr"></div>
+    </div>
   </div>
 </div>
 
 <audio id="audio"></audio>
-
 <script>
 const tracks = [
-  { file: 'aguilas.mp3',    name: 'Águilas',    emoji: '🦅' },
-  { file: 'caimanes.mp3',   name: 'Caimanes',   emoji: '🐊' },
-  { file: 'guacamayas.mp3', name: 'Guacamayas', emoji: '🦜' },
-  { file: 'innova.mp3',     name: 'Innova',     emoji: '💡' },
-  { file: 'jaguares.mp3',   name: 'Jaguares',   emoji: '🐆' },
-  { file: 'lobos.mp3',      name: 'Lobos',      emoji: '🐺' },
-  { file: 'quetzales.mp3',  name: 'Quetzales',  emoji: '🌿' },
-  { file: 'serpientes.mp3', name: 'Serpientes', emoji: '🐍' },
-  { file: 'xolos.mp3',      name: 'Xolos',      emoji: '🐕' },
+  {file:'CancionesOlimpiadasInnovaSchools/compressed/aguilas.mp3',    name:'Águilas',    emoji:'🦅'},
+  {file:'CancionesOlimpiadasInnovaSchools/compressed/caimanes.mp3',   name:'Caimanes',   emoji:'🐊'},
+  {file:'CancionesOlimpiadasInnovaSchools/compressed/guacamayas.mp3', name:'Guacamayas', emoji:'🦜'},
+  {file:'CancionesOlimpiadasInnovaSchools/compressed/innova.mp3',     name:'Innova',     emoji:'⭐'},
+  {file:'CancionesOlimpiadasInnovaSchools/compressed/jaguares.mp3',   name:'Jaguares',   emoji:'🐆'},
+  {file:'CancionesOlimpiadasInnovaSchools/compressed/lobos.mp3',      name:'Lobos',      emoji:'🐺'},
+  {file:'CancionesOlimpiadasInnovaSchools/compressed/quetzales.mp3',  name:'Quetzales',  emoji:'🌿'},
+  {file:'CancionesOlimpiadasInnovaSchools/compressed/serpientes.mp3', name:'Serpientes', emoji:'🐍'},
+  {file:'CancionesOlimpiadasInnovaSchools/compressed/xolos.mp3',      name:'Xolos',      emoji:'🐕'},
 ];
-
-const audio     = document.getElementById('audio');
-const disc      = document.getElementById('disc');
-const trackName = document.getElementById('trackName');
-const trackMeta = document.getElementById('trackMeta');
-const progressBar  = document.getElementById('progressBar');
-const progressFill = document.getElementById('progressFill');
-const timeElapsed  = document.getElementById('timeElapsed');
-const timeDuration = document.getElementById('timeDuration');
-const btnPlay   = document.getElementById('btnPlay');
-const btnPrev   = document.getElementById('btnPrev');
-const btnNext   = document.getElementById('btnNext');
-const volBar    = document.getElementById('volBar');
-const volFill   = document.getElementById('volFill');
-const volIcon   = document.getElementById('volIcon');
-const playlist  = document.getElementById('playlist');
-
-let currentIndex = 0;
-let isPlaying = false;
-
-function fmt(s) {
-  if (isNaN(s)) return '0:00';
-  const m = Math.floor(s / 60);
-  const sec = Math.floor(s % 60).toString().padStart(2, '0');
-  return `${m}:${sec}`;
-}
-
-function loadTrack(index, autoplay = false) {
-  currentIndex = index;
-  const t = tracks[index];
-  audio.src = t.file;
-  trackName.textContent = t.name;
-  trackMeta.textContent = `Pista ${index + 1} de ${tracks.length}`;
-  progressFill.style.width = '0%';
-  timeElapsed.textContent = '0:00';
-  timeDuration.textContent = '0:00';
+const audio=document.getElementById('audio'),medalOuter=document.getElementById('medalOuter'),
+  medalEmoji=document.getElementById('medalEmoji'),trackTitle=document.getElementById('trackTitle'),
+  trackSub=document.getElementById('trackSub'),elapsed=document.getElementById('elapsed'),
+  durEl=document.getElementById('dur'),progTrack=document.getElementById('progTrack'),
+  progFill=document.getElementById('progFill'),btnPlay=document.getElementById('btnPlay'),
+  btnPrev=document.getElementById('btnPrev'),btnNext=document.getElementById('btnNext'),
+  volTrack=document.getElementById('volTrack'),volFill=document.getElementById('volFill'),
+  volIcon=document.getElementById('volIcon'),playlist=document.getElementById('playlist'),
+  pulseDot=document.getElementById('pulseDot');
+let cur=0, playing=false, vol=0.8;
+audio.volume=vol;
+const fmt=s=>(!s||isNaN(s))?'0:00':`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+function loadTrack(i,auto=false){
+  cur=i; const t=tracks[i];
+  audio.src=t.file;
+  trackTitle.textContent=t.name;
+  trackSub.textContent=`EQUIPO ${i+1} DE ${tracks.length} · INNOVA OLIMPIADAS`;
+  medalEmoji.textContent=t.emoji;
+  progFill.style.width='0%'; elapsed.textContent='0:00'; durEl.textContent='0:00';
   renderPlaylist();
-  if (autoplay) { audio.play(); setPlaying(true); }
-  else { setPlaying(false); }
+  if(auto){audio.play();setPlaying(true);}else setPlaying(false);
 }
-
-function setPlaying(state) {
-  isPlaying = state;
-  btnPlay.textContent = state ? '⏸' : '▶';
-  disc.classList.toggle('playing', state);
+function setPlaying(s){
+  playing=s; btnPlay.textContent=s?'⏸':'▶';
+  medalOuter.classList.toggle('playing',s);
+  pulseDot.style.background=s?'var(--gold)':'var(--muted)';
+  renderPlaylist();
 }
-
-btnPlay.addEventListener('click', () => {
-  if (isPlaying) { audio.pause(); setPlaying(false); }
-  else { audio.play(); setPlaying(true); }
+btnPlay.addEventListener('click',()=>{ if(playing){audio.pause();setPlaying(false);}else{audio.play();setPlaying(true);} });
+btnPrev.addEventListener('click',()=>loadTrack((cur-1+tracks.length)%tracks.length,playing));
+btnNext.addEventListener('click',()=>loadTrack((cur+1)%tracks.length,playing));
+audio.addEventListener('ended',()=>loadTrack((cur+1)%tracks.length,true));
+audio.addEventListener('timeupdate',()=>{
+  if(!audio.duration)return;
+  const p=(audio.currentTime/audio.duration)*100;
+  progFill.style.width=p+'%'; elapsed.textContent=fmt(audio.currentTime); durEl.textContent=fmt(audio.duration);
 });
-
-btnPrev.addEventListener('click', () => {
-  const idx = (currentIndex - 1 + tracks.length) % tracks.length;
-  loadTrack(idx, isPlaying);
+progTrack.addEventListener('click',e=>{
+  const r=progTrack.getBoundingClientRect();
+  if(audio.duration) audio.currentTime=((e.clientX-r.left)/r.width)*audio.duration;
 });
-
-btnNext.addEventListener('click', () => {
-  const idx = (currentIndex + 1) % tracks.length;
-  loadTrack(idx, isPlaying);
+volTrack.addEventListener('click',e=>{
+  const r=volTrack.getBoundingClientRect();
+  vol=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width));
+  audio.volume=vol; volFill.style.width=(vol*100)+'%';
+  volIcon.textContent=vol===0?'🔇':vol<0.4?'🔉':'🔊';
 });
-
-audio.addEventListener('ended', () => {
-  const idx = (currentIndex + 1) % tracks.length;
-  loadTrack(idx, true);
-});
-
-audio.addEventListener('timeupdate', () => {
-  if (!audio.duration) return;
-  const pct = (audio.currentTime / audio.duration) * 100;
-  progressFill.style.width = pct + '%';
-  timeElapsed.textContent = fmt(audio.currentTime);
-  timeDuration.textContent = fmt(audio.duration);
-});
-
-// Progress seek
-progressBar.addEventListener('click', (e) => {
-  const rect = progressBar.getBoundingClientRect();
-  const pct = (e.clientX - rect.left) / rect.width;
-  if (audio.duration) audio.currentTime = pct * audio.duration;
-});
-
-// Volume
-let volume = 0.8;
-audio.volume = volume;
-volFill.style.width = (volume * 100) + '%';
-
-volBar.addEventListener('click', (e) => {
-  const rect = volBar.getBoundingClientRect();
-  volume = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-  audio.volume = volume;
-  volFill.style.width = (volume * 100) + '%';
-  volIcon.textContent = volume === 0 ? '🔇' : volume < 0.4 ? '🔉' : '🔊';
-});
-
-// Render playlist
-function renderPlaylist() {
-  playlist.innerHTML = '';
-  tracks.forEach((t, i) => {
-    const item = document.createElement('div');
-    item.className = 'track-item' + (i === currentIndex ? ' active' : '');
-    item.innerHTML = `
-      <div class="track-num">${i === currentIndex && isPlaying
-        ? `<div class="bars"><div class="bar-seg"></div><div class="bar-seg"></div><div class="bar-seg"></div></div>`
-        : (i + 1)}</div>
-      <div class="track-emoji">${t.emoji}</div>
-      <div class="track-info">
-        <div class="t-name">${t.name}</div>
-      </div>
-    `;
-    item.addEventListener('click', () => loadTrack(i, true));
-    playlist.appendChild(item);
+function renderPlaylist(){
+  playlist.innerHTML='';
+  tracks.forEach((t,i)=>{
+    const row=document.createElement('div');
+    row.className='track-row'+(i===cur?' active':'');
+    const num=(i===cur&&playing)
+      ?`<div class="eq-bars"><div class="eq-b"></div><div class="eq-b"></div><div class="eq-b"></div></div>`
+      :`<span class="tr-num">${i+1}</span>`;
+    row.innerHTML=`${num}<div class="tr-emoji">${t.emoji}</div><div class="tr-info"><div class="tr-name">${t.name}</div></div>`;
+    row.addEventListener('click',()=>loadTrack(i,true));
+    playlist.appendChild(row);
   });
-  // Scroll active into view
-  const active = playlist.querySelector('.active');
-  if (active) active.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  playlist.querySelector('.active')?.scrollIntoView({block:'nearest',behavior:'smooth'});
 }
-
-// Init
 loadTrack(0);
 </script>
 </body>
